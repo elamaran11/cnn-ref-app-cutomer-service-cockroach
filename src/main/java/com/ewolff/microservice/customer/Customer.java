@@ -1,8 +1,11 @@
 package com.ewolff.microservice.customer;
 
+import java.math.BigInteger;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.Email;
 
@@ -14,8 +17,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class Customer {
 
 	@Id
-	@GeneratedValue
-	private Long id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private String id;
 
 	@Column(nullable = false)
 	private String name;
@@ -35,7 +38,6 @@ public class Customer {
 
 	public Customer() {
 		super();
-		id = 0l;
 	}
 
 	public Customer(String firstname, String name, String email, String street,
@@ -72,11 +74,11 @@ public class Customer {
 		this.firstname = firstname;
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
