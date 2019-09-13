@@ -1,52 +1,76 @@
 package com.ewolff.microservice.customer.cdc;
 
-import static org.junit.Assert.*;
-
-import java.util.Collection;
-
+import com.ewolff.microservice.customer.Customer;
+import com.ewolff.microservice.customer.CustomerApp;
+import com.ewolff.microservice.customer.CustomerRepository;
+import com.ewolff.microservice.customer.SpringRestDataConfig;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import com.ewolff.microservice.customer.CustomerApp;
+import java.util.ArrayList;
+import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = CustomerApp.class, webEnvironment = WebEnvironment.DEFINED_PORT)
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+@RunWith(SpringRunner.class)
+//@SpringBootTest(classes = CustomerApp.class, webEnvironment = WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
+@ContextConfiguration(classes = SpringRestDataConfig.class, loader = AnnotationConfigContextLoader.class)
+//@WebIntegrationTest
 public class CustomerConsumerDrivenContractTest {
 
-	@Autowired
-	CustomerClient customerClient;
+	@InjectMocks
+	private CustomerApp customerApp;
 
-	@Test
-	public void testFindAll() {
-		Collection<Customer> result = customerClient.findAll();
-		assertEquals(1,
-				result.stream()
-						.filter(c -> (c.getName().equals("Wolff") && c.getFirstname().equals("Eberhard")
-								&& c.getEmail().equals("eberhard.wolff@gmail.com")
-								&& c.getStreet().equals("Unter den Linden") && c.getCity().equals("Berlin")))
-						.count());
+	@Mock
+	private CustomerRepository customerRepository;
+
+	private List<Customer> custList;
+
+	@Before
+	public void setup() {
+		MockitoAnnotations.initMocks(this);
+
+		custList = new ArrayList<>();
+
+		doAnswer(invocation -> {
+			Customer cust = (Customer)invocation.getArguments()[0];
+			custList.add(cust);
+			return cust;
+		}).when(customerRepository).save(any(Customer.class));
+
+
 	}
 
 	@Test
-	public void testGetOne() {
-		Collection<Customer> allCustomer = customerClient.findAll();
-		Long id = allCustomer.iterator().next().getCustomerId();
-		Customer result = customerClient.getOne(id);
-		assertEquals(id.longValue(), result.getCustomerId());
+	public void testConstructor() {
+		CustomerApp custApp = new CustomerApp(customerRepository);
+
+		assertNotNull(custApp);
 	}
 
 	@Test
-	public void testValidCustomerId() {
-		Collection<Customer> allCustomer = customerClient.findAll();
-		Long id = allCustomer.iterator().next().getCustomerId();
-		assertTrue(customerClient.isValidCustomerId(id));
-		assertFalse(customerClient.isValidCustomerId(-1));
+	public void testGenerateTestData() {
+		CustomerApp custApp = new CustomerApp(customerRepository);
+		custApp.generateTestData();
+
+    	verify(customerRepository, times(5)).save(any(Customer.class));
+    	assertEquals(5, custList.size());
 	}
+
+
 
 }

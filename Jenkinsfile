@@ -15,7 +15,7 @@ pipeline {
       steps {
         checkout scm
         container('maven') {
-          sh 'unset MAVEN_CONFIG && env && ./mvnw clean package -Dmaven.test.skip=true'
+          sh 'unset MAVEN_CONFIG && env && ./mvnw clean package'
         }
       }
     }
@@ -30,9 +30,9 @@ pipeline {
     stage('Docker push to registry'){
       steps {
         container('docker') {
-          withDockerRegistry([ credentialsId: "registry-creds", url: "" ]) {
+//          withDockerRegistry([ credentialsId: "registry-creds", url: "" ]) {
             sh "docker push ${env.DOCKER_REPO}:${env.TAG}"
-          }
+//          }
         }
       }
     }

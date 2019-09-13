@@ -11,9 +11,9 @@
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<td>id</td>
 					<td>Name</td>
 					<td>Firstname</td>
+					<td></td>
 					<td></td>
 				</tr>
 			</thead>
@@ -22,10 +22,12 @@
 					<td colspan="4">No customers</td>
 				</tr>
 				<tr th:each="customer : ${customers}">
-					<td><a href="1.html" th:href="${customer.id+'.html'}"
-						th:text="${customer.id}">1</a></td>
 					<td th:text="${customer.name}">Name</td>
 					<td th:text="${customer.firstname}">Firstname</td>
+					
+					<td><a href="1.html" th:href="${customer.id+'.html'}"
+						th:text="Edit">1</a></td>
+					
 					<td><form th:action="${customer.id}+'.html'"
 							th:method="delete">
 							<input type="submit" value="delete" class="btn btn-link" />
