@@ -1,10 +1,9 @@
 package com.ewolff.microservice.customer.web;
 
-import java.math.BigInteger;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
+import co.elastic.apm.api.CaptureSpan;
+import co.elastic.apm.api.CaptureTransaction;
+import com.ewolff.microservice.customer.Customer;
+import com.ewolff.microservice.customer.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.ewolff.microservice.customer.Customer;
-import com.ewolff.microservice.customer.CustomerRepository;
+import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 @Controller
 public class CustomerController {
@@ -27,12 +26,14 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/{id}.html", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+	@CaptureSpan("GetOperation")
 	public ModelAndView customer(@PathVariable("id") String id) {
 		return new ModelAndView("customer", "customer",
 				customerRepository.findById(id).get());
 	}
 
 	@RequestMapping("/list.html")
+	@CaptureTransaction(type = "Task", value = "CustomerList")
 	public ModelAndView customerList() {
 		return new ModelAndView("customerlist", "customers",
 				customerRepository.findAll());
@@ -44,6 +45,7 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/form.html", method = RequestMethod.POST)
+	@CaptureTransaction(type = "Task", value = "CustomerAdd")
 	public ModelAndView post(Customer customer, HttpServletRequest httpRequest) {
 		customer.setId(UUID.randomUUID().toString());
 		customer = customerRepository.save(customer);
@@ -51,6 +53,7 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/{id}.html", method = RequestMethod.PUT)
+	@CaptureSpan("UpdateOperation")
 	public ModelAndView put(@PathVariable("id") String id, Customer customer,
 			HttpServletRequest httpRequest) {
 		if(id == null || id.equalsIgnoreCase("null")) {
@@ -61,6 +64,7 @@ public class CustomerController {
 	}
 
 	@RequestMapping(value = "/{id}.html", method = RequestMethod.DELETE)
+	@CaptureTransaction(type = "Task", value = "CustomerDelete")
 	public ModelAndView delete(@PathVariable("id") String id) {
 		customerRepository.deleteById(id);
 		return new ModelAndView("success");
