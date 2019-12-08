@@ -1,0 +1,13 @@
+steps:
+  - id: 'mvn install'
+  - name: 'gcr.io/cloud-builders/mvn'
+    args: ['install']
+  - id: 'mvn package'
+  - name: 'gcr.io/cloud-builders/mvn'
+    args: ['package']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '--network=cloudbuild', '-t', 'gcr.io/$_PROJECT_ID/$_APP_NAME:$_TAG', '.']
+options:
+  env:
+#    - 'APP_NAME=customer-service'
+#    - 'PROJECT_ID=terraform-demo-236519'
