@@ -1,7 +1,7 @@
 steps:
-  - id: 'mvn install'
-    name: 'gcr.io/cloud-builders/mvn'
-    args: ['install']
+#  - id: 'mvn install'
+#    name: 'gcr.io/cloud-builders/mvn'
+#    args: ['install']
   - id: 'mvn package'
     name: 'gcr.io/cloud-builders/mvn'
     args: ['package']
