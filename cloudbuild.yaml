@@ -5,6 +5,8 @@ steps:
   - id: 'docker build'
     name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$_PROJECT_ID/$_APP_NAME:$_TAG', '.']
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args: ['push', 'gcr.io/$_PROJECT_ID/$_APP_NAME:$_TAG']
 images: ['gcr.io/$_PROJECT_ID/$_APP_NAME:$_TAG']
 options:
   env:
