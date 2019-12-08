@@ -1,10 +1,11 @@
 steps:
   - id: 'mvn package'
     name: 'gcr.io/cloud-builders/mvn'
-    args: ['package', '-Dmaven.test.skip=true', '-Ddocker.image.prefix=gcr.io/$_PROJECT_ID']
+    args: ['package', '-Dmaven.test.skip=true']
   - id: 'docker build'
     name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '--network=cloudbuild', '-t', 'gcr.io/$_PROJECT_ID/$_APP_NAME:$_TAG', '.']
+    args: ['build', '-t', 'gcr.io/$_PROJECT_ID/$_APP_NAME:$_TAG', '.']
+images: ['gcr.io/$_PROJECT_ID/$_APP_NAME:$_TAG']
 options:
   env:
 #    - 'APP_NAME=customer-service'
