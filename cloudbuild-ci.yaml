@@ -1,0 +1,8 @@
+steps:
+  - id: 'mvn package'
+    name: 'gcr.io/cloud-builders/mvn'
+    args: ['package', '-Dmaven.test.skip=true']
+options:
+  env:
+#    - 'APP_NAME=customer-service'
+#    - 'PROJECT_ID=terraform-demo-236519'
