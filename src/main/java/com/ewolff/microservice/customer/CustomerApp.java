@@ -4,11 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Component;
-
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -17,17 +13,15 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.*;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.UUID;
 
-@ComponentScan
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-@Component
+@SpringBootApplication
 public class CustomerApp {
 
 	private final CustomerRepository customerRepository;
@@ -73,9 +67,11 @@ public class CustomerApp {
 	        			String fName = ((String)name.get("first"));
 	        			String lName = ((String)name.get("last"));
 	        			JSONObject address = (JSONObject) user.get("location");
+	        			String street = (String) address.get("street").toString();
+	        			String city = (String) address.get("city").toString();
 	        			//System.out.println(fName + " " +lName + " " + fName + "." + lName + "@gmail.com" + " " + ((String) address.get("street")) + " " + ((String) address.get("city")));
-	        			customerRepository.save(new Customer(fName, lName,
-	        					"aa@gmail.com", ((String) address.get("street")),((String) address.get("city"))));
+	        			customerRepository.save(new Customer(UUID.randomUUID().toString(), fName, lName,
+	        					"aa@gmail.com", street, city));
 	        		}
 	        	}
         }
