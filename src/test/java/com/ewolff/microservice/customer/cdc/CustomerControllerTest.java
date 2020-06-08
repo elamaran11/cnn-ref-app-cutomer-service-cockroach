@@ -106,7 +106,7 @@ public class CustomerControllerTest {
         Customer cust =  new Customer();
         cust.setId("1");
         cust.setCity("test city");
-        cust.setEmail("testemail@keybank.com");
+        cust.setEmail("testemail@example.com");
         cust.setFirstname("testfirstname");
         cust.setName("test name");
         cust.setStreet("test street");
